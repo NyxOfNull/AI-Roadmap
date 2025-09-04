@@ -33,6 +33,7 @@ app.post('/generate-roadmap', async (req, res) => {
     }
     prompt += '\nThe roadmap should be clear, structured, and actionable.';
     console.log('Prompt for OpenAI:', prompt);
+
     const completion = await client.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
@@ -40,6 +41,7 @@ app.post('/generate-roadmap', async (req, res) => {
         { role: 'user', content: prompt }
       ]
     });
+
     const roadmap = completion.choices[0].message.content;
     console.log('Sending roadmap response to frontend...');
     res.json({ roadmap });
@@ -59,24 +61,30 @@ app.post('/chat', async (req, res) => {
     } else {
       progressText = '\n\nThe user has not marked any steps as completed yet.';
     }
+
     const messages = [
-      { role: 'system', content: `You are an expert AI assistant. The user will ask questions about their personalized learning roadmap. Use the roadmap below as context to answer questions clearly and helpfully. Do not repeat the roadmap unless specifically asked.\n\nUser's Roadmap:\n${roadmap}${progressText}` }
+      {
+        role: 'system',
+        content: `You are an expert AI assistant. The user will ask questions about their personalized learning roadmap. Use the roadmap below as context to answer questions clearly and helpfully. Do not repeat the roadmap unless specifically asked.\n\nUser's Roadmap:\n${roadmap}${progressText}`
+      }
     ];
+
     if (Array.isArray(history)) {
       history.forEach(entry => {
-        if (entry.sender === 'user') {
-          messages.push({ role: 'user', content: entry.text });
-        } else {
-          messages.push({ role: 'assistant', content: entry.text });
-        }
+        messages.push({
+          role: entry.sender === 'user' ? 'user' : 'assistant',
+          content: entry.text
+        });
       });
     }
+
     messages.push({ role: 'user', content: message });
 
     const completion = await client.chat.completions.create({
       model: 'gpt-4o-mini',
       messages
     });
+
     const reply = completion.choices[0].message.content;
     res.json({ reply });
   } catch (error) {
@@ -85,9 +93,9 @@ app.post('/chat', async (req, res) => {
   }
 });
 
-// Fallback to index.html for client-side routing
-app.get('/:path(*)', (req, res) => {
+// Catch-all fallback for client-side routing (Render-safe)
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
