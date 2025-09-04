@@ -1,7 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-require('dotenv').config();
+// Optional: only load dotenv locally
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 const OpenAI = require('openai');
 const path = require('path');
 
