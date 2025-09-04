@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-// Optional: only load dotenv locally
+// Load dotenv only locally
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
