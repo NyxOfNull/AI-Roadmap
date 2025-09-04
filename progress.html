@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Roadmap Progress Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="home.html" class="site-logo" title="Go to Home">
+      <img src="data:image/svg+xml,%3Csvg width='44' height='44' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='22' cy='22' r='22' fill='%236366f1'/%3E%3Cpath d='M14 28C14 22 22 16 30 28' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='22' cy='18' r='3' fill='white'/%3E%3C/svg%3E" alt="AI Roadmap Logo" style="height:40px;width:40px;vertical-align:middle;" />
+      <span class="site-title">AI Roadmap</span>
+    </a>
+    <nav class="site-nav">
+  <a href="index.html">Generate Roadmap</a>
+      <a href="roadmaps.html">Saved Roadmaps</a>
+      <a href="progress.html">Track Progress</a>
+    </nav>
+  </header>
+  <div class="container">
+    <h1>Roadmap Progress Tracker</h1>
+    <div id="progress-list"></div>
+    <a href="index.html" class="luxury-btn">Back to Generator</a>
+  </div>
+  <script src="progress.js"></script>
+   <script>
+     // Apply persistent theme mode from localStorage
+     (function() {
+       function setTheme(theme) {
+         document.body.setAttribute('data-theme', theme);
+       }
+       function getPreferredTheme() {
+         const stored = localStorage.getItem('theme');
+         if (stored) return stored;
+         return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+       }
+       setTheme(getPreferredTheme());
+     })();
+   </script>
+</body>
+</html>
