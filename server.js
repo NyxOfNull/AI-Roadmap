@@ -3,18 +3,23 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const OpenAI = require('openai');
+const path = require('path');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
+// Serve front-end static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
+// API route for generating roadmap
 app.post('/generate-roadmap', async (req, res) => {
   const { skill, level, duration, durationUnit, hours } = req.body;
   console.log('Received /generate-roadmap request:', req.body);
@@ -36,27 +41,18 @@ app.post('/generate-roadmap', async (req, res) => {
       ]
     });
     const roadmap = completion.choices[0].message.content;
-    // console.log('OpenAI response:', roadmap); // No longer log roadmap to terminal
     console.log('Sending roadmap response to frontend...');
     res.json({ roadmap });
   } catch (error) {
     console.error('Error generating roadmap:', error);
-    if (error.response) {
-      console.error('OpenAI API response error:', error.response.status, error.response.data);
-    } else if (error.request) {
-      console.error('OpenAI API request error:', error.request);
-    } else {
-      console.error('General error:', error.message);
-    }
     res.status(500).json({ error: 'Failed to generate roadmap' });
   }
 });
 
-// Add this endpoint for chat
+// API route for chat
 app.post('/chat', async (req, res) => {
   const { message, roadmap, history, progress } = req.body;
   try {
-    // Build chat history for OpenAI
     let progressText = '';
     if (Array.isArray(progress) && progress.length > 0) {
       progressText = `\n\nThe user has marked the following steps as completed (by index): ${progress.join(', ')}.`;
@@ -85,15 +81,13 @@ app.post('/chat', async (req, res) => {
     res.json({ reply });
   } catch (error) {
     console.error('Error in chat:', error);
-    if (error.response) {
-      console.error('OpenAI API response error:', error.response.status, error.response.data);
-    } else if (error.request) {
-      console.error('OpenAI API request error:', error.request);
-    } else {
-      console.error('General error:', error.message);
-    }
-    res.status(500).json({ reply: "Sorry, I couldn't process your question right now. (See server logs for details)" });
+    res.status(500).json({ reply: "Sorry, I couldn't process your question right now." });
   }
+});
+
+// Fallback to index.html for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));

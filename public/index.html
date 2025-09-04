@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Learning Roadmap Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="home.html" class="site-logo" title="Go to Home">
+      <img src="data:image/svg+xml,%3Csvg width='44' height='44' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='22' cy='22' r='22' fill='%236366f1'/%3E%3Cpath d='M14 28C14 22 22 16 30 28' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='22' cy='18' r='3' fill='white'/%3E%3C/svg%3E" alt="AI Roadmap Logo" style="height:40px;width:40px;vertical-align:middle;" />
+      <span class="site-title">AI Roadmap</span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">Generate Roadmap</a>
+      <a href="roadmaps.html">Saved Roadmaps</a>
+      <a href="progress.html">Track Progress</a>
+    </nav>
+  </header>
+  <div class="container">
+    <h1>AI Learning Roadmap Generator</h1>
+    <p>Get a personalized step-by-step roadmap for any skill you want to learn!</p>
+
+    <div class="input-section">
+      <input id="skill" type="text" placeholder="Enter skill (e.g., Unity)" />
+      
+      <select id="level">
+        <option value="Beginner">Beginner</option>
+        <option value="Intermediate">Intermediate</option>
+        <option value="Advanced">Advanced</option>
+      </select>
+      
+
+      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+        <input id="duration" type="number" min="1" placeholder="Duration" style="flex:1;" />
+        <select id="duration-unit" style="flex:1;max-width:110px;">
+          <option value="days">Days</option>
+          <option value="weeks">Weeks</option>
+          <option value="months">Months</option>
+        </select>
+      </div>
+      <input id="hours" type="number" placeholder="Hours per week (optional)" />
+      
+  <button id="generate">Generate Roadmap</button>
+    </div>
+
+    <div id="loading" style="display: none;">⏳ Generating your roadmap...</div>
+    
+  <div id="result" class="output-section"></div>
+  <button id="save-roadmap" style="display:none; margin-bottom: 16px;">Save Roadmap</button>
+
+    <!-- Link to Saved Roadmaps Page -->
+    <div style="margin-bottom: 24px; display: flex; gap: 16px; justify-content: center;">
+      <a href="roadmaps.html" class="luxury-btn">View & Chat with Saved Roadmaps</a>
+      <a href="progress.html" class="luxury-btn">Track Progress</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Apply persistent theme mode from localStorage
+    (function() {
+      function setTheme(theme) {
+        document.body.setAttribute('data-theme', theme);
+      }
+      function getPreferredTheme() {
+        const stored = localStorage.getItem('theme');
+        if (stored) return stored;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      setTheme(getPreferredTheme());
+    })();
+  </script>
+</body>
+</html>
