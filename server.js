@@ -27,23 +27,35 @@ app.post('/generate-roadmap', async (req, res) => {
   const { skill, level, duration, durationUnit, hours } = req.body;
   console.log('Received /generate-roadmap request:', req.body);
   try {
-    let prompt = `Create a week-by-week learning roadmap for someone who wants to learn ${skill}.\nTheir current experience level is ${level}.`;
+    let prompt = `Create a detailed, structured learning roadmap for someone who wants to learn ${skill}.
+Their current experience level is ${level}.`;
+
     if (duration && durationUnit) {
-      prompt += `\nThe total duration for this course should be about ${duration} ${durationUnit}.`;
+      prompt += `\nThe total learning duration should be about ${duration} ${durationUnit}.`;
     }
     if (hours) {
-      prompt += `\nThe learner can dedicate about ${hours} hours per week.`;
+      prompt += `\nThe learner can dedicate around ${hours} hours per week.`;
     }
-    prompt += '\nThe roadmap should be clear, structured, and actionable.';
+
+    prompt += `
+The roadmap should:
+- Be broken down week by week, with each week divided into daily tasks or study goals.
+- Clearly state what to do each day (e.g., watch tutorials, read docs, practice coding, do a mini-project).
+- Highlight important concepts or skills that must not be skipped.
+- Recommend reliable resources (official documentation, YouTube channels, courses, free platforms, etc.) for each week/day.
+- Be actionable and progressive, starting with basics and gradually advancing. 
+- End with suggested projects or milestones to measure progress.`;
+
     console.log('Prompt for OpenAI:', prompt);
 
     const completion = await client.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
-        { role: 'system', content: 'You are an expert learning coach.' },
+        { role: 'system', content: 'You are an expert learning coach and curriculum designer.' },
         { role: 'user', content: prompt }
       ]
     });
+
 
     const roadmap = completion.choices[0].message.content;
     console.log('Sending roadmap response to frontend...');
