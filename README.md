@@ -49,7 +49,7 @@ Designed to help students, self-learners, and professionals plan their learning 
 4. **Run the server**
 
    ```bash
-   node index.js
+   node server.js
    ```
 
    App will run on: `http://localhost:3000`
