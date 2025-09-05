@@ -115,11 +115,12 @@ document.addEventListener('DOMContentLoaded', function() {
         appendMessage('bot', data.reply);
         chatHistory.push({ sender: 'bot', text: data.reply });
     }
-
+if (sendChatBtn && chatInput) {
     sendChatBtn.addEventListener('click', sendChat);
     chatInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') sendChat();
     });
+}
 
     // Hide save button initially
     document.getElementById('save-roadmap').style.display = 'none';
