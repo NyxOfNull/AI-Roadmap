@@ -1,3 +1,6 @@
+const API_BASE = window.location.hostname === "localhost"
+  ? "http://localhost:5000"
+  : ""; // empty string = same origin when deployed
 document.addEventListener('DOMContentLoaded', function() {
     const roadmapList = document.getElementById('roadmap-list');
     const chatSection = document.getElementById('chat-section');
@@ -253,16 +256,19 @@ if (!window.renderMarkdown) {
     };
 }
 
-    async function sendChat() {
-        const message = chatInput.value.trim();
-        if (!message || !selectedRoadmap) return;
-        appendMessage('user', message);
-        chatInput.value = '';
-        chatHistory.push({ sender: 'user', text: message });
-        // Get progress for this roadmap
-        let progress = JSON.parse(localStorage.getItem('progress_' + selectedRoadmap.date) || '[]');
-        // Send chat to backend
-        const response = await fetch('http://localhost:5000/chat', {
+async function sendChat() {
+    const message = chatInput.value.trim();
+    if (!message || !selectedRoadmap) return;
+
+    appendMessage('user', message);
+    chatInput.value = '';
+    chatHistory.push({ sender: 'user', text: message });
+
+    // Get progress for this roadmap
+    let progress = JSON.parse(localStorage.getItem('progress_' + selectedRoadmap.date) || '[]');
+
+    try {
+        const response = await fetch(`${API_BASE}/chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -272,10 +278,16 @@ if (!window.renderMarkdown) {
                 progress
             })
         });
+
         const data = await response.json();
         appendMessage('bot', data.reply);
         chatHistory.push({ sender: 'bot', text: data.reply });
+
+    } catch (err) {
+        console.error("Chat request failed:", err);
+        appendMessage('system', "⚠️ Failed to reach server. Please try again.");
     }
+}
 
     sendChatBtn.addEventListener('click', sendChat);
     chatInput.addEventListener('keydown', function(e) {
