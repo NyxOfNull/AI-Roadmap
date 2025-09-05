@@ -29,7 +29,7 @@ Designed to help students, self-learners, and professionals plan their learning 
 1. **Clone the repo**
 
    ```bash
-   git clone https://github.com/yourusername/ai-roadmap.git
+   git clone https://github.com/NyxOfNull/ai-roadmap.git
    cd ai-roadmap
    ```
 
