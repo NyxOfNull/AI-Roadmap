@@ -1,5 +1,3 @@
----
-
 # 📚 AI Learning Roadmap Generator
 
 An interactive web app that generates **personalized week-by-week learning roadmaps** powered by AI.
@@ -69,5 +67,3 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 MIT License. Free to use and modify.
 
 ---
-
-Want me to make it **flashier with badges, emojis, and a roadmap section**, or keep it **clean and minimal**?
