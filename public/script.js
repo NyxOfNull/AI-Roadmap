@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         resultDiv.innerHTML = '';
         document.getElementById('save-roadmap').style.display = 'none';
         try {
-            const response = await fetch('http://localhost:5000/generate-roadmap', {
+            const response = await fetch('/generate-roadmap', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ skill, level, duration, durationUnit, hours })
@@ -125,9 +125,11 @@ if (sendChatBtn && chatInput) {
     // Hide save button initially
     document.getElementById('save-roadmap').style.display = 'none';
 
+if (sendChatBtn && chatInput) {
     // Reset chat history when a new roadmap is generated
     document.getElementById('generate').addEventListener('click', function() {
         chatHistory = [];
         chatWindow.innerHTML = '';
     });
+}
 });
