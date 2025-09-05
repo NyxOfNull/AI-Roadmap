@@ -52,7 +52,7 @@ Designed to help students, self-learners, and professionals plan their learning 
    node server.js
    ```
 
-   App will run on: `http://localhost:3000`
+   App will run on: `http://localhost:5000`
 
 ---
 
