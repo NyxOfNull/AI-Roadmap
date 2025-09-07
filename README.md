@@ -11,7 +11,7 @@ Designed to help students, self-learners, and professionals plan their learning 
 * 💾 **Save & manage roadmaps** – revisit and continue your learning paths.
 * 💬 **Chat with your roadmap** (planned) – ask questions and refine your plan.
 * 🎨 **Modern UI/UX** – responsive design with clean styling.
-* 📑 **Export options** – save your roadmap as a PDF (WIP).(Will be added later, now bugged).
+* 📑 **Export options** – save your roadmap as HTML, Text, or Markdown.
 
 ---
 
