@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Download option
         const downloadOpt = document.createElement('div');
-        downloadOpt.textContent = 'Download as PDF';
+        downloadOpt.textContent = 'Download';
         downloadOpt.style.padding = '12px 18px';
         downloadOpt.style.cursor = 'pointer';
         downloadOpt.style.color = '#bfa181';
@@ -72,8 +72,6 @@ document.addEventListener('DOMContentLoaded', function() {
             popup.style.display = 'none';
             showDownloadModal(item);
         };
-
-    // ...existing code...
 
     // Download confirmation modal logic
     let downloadModal = document.getElementById('download-modal');
@@ -92,9 +90,12 @@ document.addEventListener('DOMContentLoaded', function() {
         downloadModal.style.zIndex = '2000';
         downloadModal.innerHTML = `
             <div style="background:#181818;border-radius:18px;padding:40px 32px 28px 32px;box-shadow:0 8px 32px #bfa18155;border:2px solid #bfa181;min-width:320px;max-width:90vw;text-align:center;">
-                <div style="color:#f5e9da;font-size:1.18rem;margin-bottom:28px;font-weight:500;">Download this roadmap as PDF?</div>
-                <div style="display:flex;gap:24px;justify-content:center;">
-                    <button id="download-confirm" class="luxury-btn" style="min-width:110px;padding:12px 24px;">Download</button>
+                <div style="color:#f5e9da;font-size:1.18rem;margin-bottom:28px;font-weight:500;">Choose download format:</div>
+                <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;">
+                    <button id="download-html-light" class="luxury-btn" style="min-width:110px;padding:12px 24px;">HTML (Light)</button>
+                    <button id="download-html-dark" class="luxury-btn" style="min-width:110px;padding:12px 24px;">HTML (Dark)</button>
+                    <button id="download-txt" class="luxury-btn" style="min-width:110px;padding:12px 24px;">TXT</button>
+                    <button id="download-md" class="luxury-btn" style="min-width:110px;padding:12px 24px;">MD</button>
                     <button id="download-cancel" class="luxury-btn" style="min-width:110px;padding:12px 24px;background:linear-gradient(90deg,#e57373 0%,#bfa181 100%);color:#fff;">Cancel</button>
                 </div>
             </div>
@@ -104,56 +105,138 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showDownloadModal(item) {
         downloadModal.style.display = 'flex';
-        const confirmBtn = document.getElementById('download-confirm');
+        
+        const htmlLightBtn = document.getElementById('download-html-light');
+        const htmlDarkBtn = document.getElementById('download-html-dark');
+        const txtBtn = document.getElementById('download-txt');
+        const mdBtn = document.getElementById('download-md');
         const cancelBtn = document.getElementById('download-cancel');
-        confirmBtn.onclick = () => {
-            downloadModal.style.display = 'none';
-            // Find the visible roadmap div
-            const roadmapDiv = document.getElementById('selected-roadmap');
-            if (!roadmapDiv || !roadmapDiv.innerHTML.trim()) {
-                alert('Please select a roadmap to download.');
-                return;
-            }
-            // Clone the node to avoid UI flicker
-            const clone = roadmapDiv.cloneNode(true);
-            // Inline all computed styles recursively
-            function inlineAllStyles(element) {
-                const computed = window.getComputedStyle(element);
-                for (let key of computed) {
-                    element.style[key] = computed.getPropertyValue(key);
-                }
-                Array.from(element.children).forEach(child => inlineAllStyles(child));
-            }
-            inlineAllStyles(clone);
-            clone.style.background = '#fff';
-            clone.style.color = '#232526';
-            clone.style.padding = '32px';
-            clone.style.width = '700px';
-            clone.style.maxWidth = '90vw';
-            clone.style.border = 'none';
-            clone.style.boxShadow = 'none';
-            clone.style.position = 'absolute';
-            clone.style.left = '50%';
-            clone.style.top = window.scrollY + 40 + 'px';
-            clone.style.transform = 'translateX(-50%)';
-            clone.style.zIndex = '9999';
-            document.body.appendChild(clone);
-            window.scrollTo(0, 0);
-            setTimeout(() => {
-                html2pdf().set({
-                    margin: 0.5,
-                    filename: `${item.skill}_roadmap.pdf`,
-                    html2canvas: { scale: 2, backgroundColor: '#fff', useCORS: true },
-                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'] }
-                }).from(clone).save().then(() => {
-                    document.body.removeChild(clone);
-                });
-            }, 300);
-        };
-        cancelBtn.onclick = () => {
-            downloadModal.style.display = 'none';
-        };
+
+        const generateHTML = (isDark) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${item.skill} Learning Roadmap</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: ${isDark ? '#121212' : '#ffffff'};
+            color: ${isDark ? '#e0e0e0' : '#2d3748'};
+        }
+        h1, h2, h3 { 
+            color: ${isDark ? '#818cf8' : '#6366f1'};
+            margin-top: 1.5em;
+        }
+        ul, ol { 
+            margin-left: 20px;
+            color: ${isDark ? '#d1d5db' : '#4a5568'};
+        }
+        li { margin-bottom: 10px; }
+        code {
+            background: ${isDark ? '#2d3748' : '#f1f5f9'};
+            color: ${isDark ? '#e0e0e0' : '#2d3748'};
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .header {
+            background: ${isDark ? '#1a1a1a' : '#6366f1'};
+            color: ${isDark ? '#e0e0e0' : '#ffffff'};
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px ${isDark ? 'rgba(0,0,0,0.2)' : 'rgba(99,102,241,0.2)'};
+        }
+        .header h1 {
+            color: ${isDark ? '#818cf8' : '#ffffff'};
+            margin: 0 0 1rem 0;
+            font-size: 2.2rem;
+        }
+        .header p {
+            margin: 0.5rem 0;
+            opacity: 0.9;
+        }
+        .content {
+            background: ${isDark ? '#1a1a1a' : '#ffffff'};
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px ${isDark ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.1)'};
+            border: 1px solid ${isDark ? '#2d3748' : '#e2e8f0'};
+        }
+        strong {
+            color: ${isDark ? '#818cf8' : '#6366f1'};
+            font-weight: 600;
+        }
+        em {
+            color: ${isDark ? '#9ca3af' : '#64748b'};
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>${item.skill} Learning Roadmap</h1>
+        <p>Level: ${item.level}</p>
+        <p>Generated: ${new Date(item.date).toLocaleString()}</p>
+    </div>
+    <div class="content">
+        ${renderMarkdownWithLinks(item.roadmap)}
+    </div>
+</body>
+</html>`;
+            
+            htmlLightBtn.onclick = () => {
+                downloadModal.style.display = 'none';
+                const blob = new Blob([generateHTML(false)], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${item.skill}_roadmap_light.html`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+
+            htmlDarkBtn.onclick = () => {
+                downloadModal.style.display = 'none';
+                const blob = new Blob([generateHTML(true)], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${item.skill}_roadmap_dark.html`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+
+            txtBtn.onclick = () => {
+                downloadModal.style.display = 'none';
+                const blob = new Blob([item.roadmap], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${item.skill}_roadmap.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+
+            mdBtn.onclick = () => {
+                downloadModal.style.display = 'none';
+                const blob = new Blob([item.roadmap], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${item.skill}_roadmap.md`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+
+            cancelBtn.onclick = () => {
+                downloadModal.style.display = 'none';
+            };
     }
 
         // Delete option
@@ -254,6 +337,30 @@ if (!window.renderMarkdown) {
         html = html.replace(/\n/g, '<br>');
         return html;
     };
+}
+
+function renderMarkdownWithLinks(md) {
+    let html = md
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+        .replace(/\n---+\n/g, '<hr>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        // Add clickable links with target="_blank"
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">$1</a>');
+
+    // Handle lists
+    html = html.replace(/^\s*[-*] (.*)$/gim, '<ul><li>$1</li></ul>');
+    html = html.replace(/\n<ul>/g, '<ul>');
+    html = html.replace(/<\/li><\/ul>\n<ul><li>/g, '</li><li>');
+    html = html.replace(/^\s*\d+\. (.*)$/gim, '<ol><li>$1</li></ol>');
+    html = html.replace(/\n<ol>/g, '<ol>');
+    html = html.replace(/<\/li><\/ol>\n<ol><li>/g, '</li><li>');
+    html = html.replace(/\n/g, '<br>');
+    
+    return html;
 }
 
 async function sendChat() {
